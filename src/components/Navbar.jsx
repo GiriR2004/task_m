@@ -1,6 +1,5 @@
 import React from 'react';
 import { ListTodo, Plus } from 'lucide-react';
-import { useTaskContext } from '../context/TaskContext';
 
 const Navbar = ({ openTaskModal }) => {
   return (

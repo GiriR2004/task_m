@@ -1,23 +1,7 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { Task, TaskFilter } from '../types';
-
-interface TaskContextProps {
-  tasks: Task[];
-  filteredTasks: Task[];
-  activeFilter: TaskFilter;
-  searchQuery: string;
-  addTask: (task: Omit<Task, 'id'>) => void;
-  updateTask: (task: Task) => void;
-  deleteTask: (id: string) => void;
-  toggleTaskStatus: (id: string) => void;
-  setActiveFilter: (filter: TaskFilter) => void;
-  setSearchQuery: (query: string) => void;
-}
-
-const TaskContext = createContext<TaskContextProps | undefined>(undefined);
+import React, { createContext, useContext, useState } from 'react';
 
 // Sample initial tasks
-const initialTasks: Task[] = [
+const initialTasks = [
   {
     id: '1',
     title: 'Complete project proposal',
@@ -48,18 +32,18 @@ const initialTasks: Task[] = [
   },
 ];
 
-export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
-  const [activeFilter, setActiveFilter] = useState<TaskFilter>('all');
+const TaskContext = createContext();
+
+export const TaskProvider = ({ children }) => {
+  const [tasks, setTasks] = useState(initialTasks);
+  const [activeFilter, setActiveFilter] = useState('all'); // 'all' | 'open' | 'completed'
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   // Filter tasks based on active filter and search query
   const filteredTasks = tasks.filter(task => {
-    // Filter by status
     if (activeFilter === 'open' && task.status !== 'open') return false;
     if (activeFilter === 'completed' && task.status !== 'completed') return false;
-    
-    // Filter by search query
+
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       return (
@@ -68,29 +52,29 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         task.dueDate.includes(query)
       );
     }
-    
+
     return true;
   });
-  
-  const addTask = (task: Omit<Task, 'id'>) => {
-    const newTask: Task = {
+
+  const addTask = (task) => {
+    const newTask = {
       ...task,
       id: Date.now().toString(),
     };
     setTasks(prevTasks => [...prevTasks, newTask]);
   };
-  
-  const updateTask = (updatedTask: Task) => {
+
+  const updateTask = (updatedTask) => {
     setTasks(prevTasks =>
       prevTasks.map(task => (task.id === updatedTask.id ? updatedTask : task))
     );
   };
-  
-  const deleteTask = (id: string) => {
+
+  const deleteTask = (id) => {
     setTasks(prevTasks => prevTasks.filter(task => task.id !== id));
   };
-  
-  const toggleTaskStatus = (id: string) => {
+
+  const toggleTaskStatus = (id) => {
     setTasks(prevTasks =>
       prevTasks.map(task =>
         task.id === id
@@ -100,20 +84,24 @@ export const TaskProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     );
   };
 
-  const value = {
-    tasks,
-    filteredTasks,
-    activeFilter,
-    searchQuery,
-    addTask,
-    updateTask,
-    deleteTask,
-    toggleTaskStatus,
-    setActiveFilter,
-    setSearchQuery,
-  };
-
-  return <TaskContext.Provider value={value}>{children}</TaskContext.Provider>;
+  return (
+    <TaskContext.Provider
+      value={{
+        tasks,
+        filteredTasks,
+        activeFilter,
+        searchQuery,
+        addTask,
+        updateTask,
+        deleteTask,
+        toggleTaskStatus,
+        setActiveFilter,
+        setSearchQuery,
+      }}
+    >
+      {children}
+    </TaskContext.Provider>
+  );
 };
 
 export const useTaskContext = () => {

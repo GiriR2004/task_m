@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { TaskProvider } from './context/TaskContext';
-import Dashboard from './pages/Dashboard';
-import NotFound from './pages/NotFound';
+import Dashboard from './components/Dashboard';
+import NotFound from './components/NotFound';
 
 function App() {
   return (
