@@ -1,38 +1,37 @@
 import React, { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { useTaskContext } from '../context/TaskContext';
-import Navbar from '../components/Navbar';
-import TaskCard from '../components/TaskCard';
-import TaskModal from '../components/TaskModal';
-import SearchBar from '../components/SearchBar';
-import FilterTabs from '../components/FilterTabs';
-import { Task } from '../types';
+import Navbar from './Navbar';
+import TaskCard from './TaskCard';
+import TaskModal from './TaskModal';
+import SearchBar from './SearchBar';
+import FilterTabs from './FilterTabs';
 
-const Dashboard: React.FC = () => {
-  const { 
-    filteredTasks, 
-    addTask, 
-    updateTask, 
-    deleteTask, 
-    toggleTaskStatus 
+const Dashboard = () => {
+  const {
+    filteredTasks,
+    addTask,
+    updateTask,
+    deleteTask,
+    toggleTaskStatus,
   } = useTaskContext();
-  
+
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentTask, setCurrentTask] = useState<Task | undefined>(undefined);
-  
+  const [currentTask, setCurrentTask] = useState(undefined);
+
   const openAddModal = () => {
     setCurrentTask(undefined);
     setIsModalOpen(true);
   };
-  
-  const openEditModal = (task: Task) => {
+
+  const openEditModal = (task) => {
     setCurrentTask(task);
     setIsModalOpen(true);
   };
-  
-  const handleModalSubmit = (taskData: Omit<Task, 'id'> | Task) => {
+
+  const handleModalSubmit = (taskData) => {
     if ('id' in taskData) {
-      updateTask(taskData as Task);
+      updateTask(taskData);
     } else {
       addTask(taskData);
     }
@@ -41,7 +40,7 @@ const Dashboard: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar openTaskModal={openAddModal} />
-      
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex-1 min-w-0">
@@ -59,7 +58,7 @@ const Dashboard: React.FC = () => {
             </button>
           </div>
         </div>
-        
+
         <div className="mt-6 pb-5">
           <FilterTabs />
         </div>
@@ -67,7 +66,7 @@ const Dashboard: React.FC = () => {
         <div className="mt-6">
           <SearchBar />
         </div>
-        
+
         <div className="mt-8">
           {filteredTasks.length > 0 ? (
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -100,8 +99,8 @@ const Dashboard: React.FC = () => {
               <h3 className="mt-2 text-sm font-medium text-gray-900">No tasks found</h3>
               <p className="mt-1 text-sm text-gray-500">
                 {filteredTasks.length === 0
-                  ? "Get started by creating a new task"
-                  : "Try changing your search query or filter"}
+                  ? 'Get started by creating a new task'
+                  : 'Try changing your search query or filter'}
               </p>
               <div className="mt-6">
                 <button
@@ -116,7 +115,7 @@ const Dashboard: React.FC = () => {
           )}
         </div>
       </main>
-      
+
       {/* Floating action button on mobile */}
       <div className="sm:hidden fixed right-6 bottom-6">
         <button
@@ -126,7 +125,7 @@ const Dashboard: React.FC = () => {
           <Plus className="h-6 w-6" />
         </button>
       </div>
-      
+
       <TaskModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
